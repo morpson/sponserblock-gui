@@ -18,7 +18,7 @@ jobs:
     steps:
           # Get the repository's code
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
           # Update description
       - name: Update repo description
