@@ -15,6 +15,14 @@ available on YouTube ads.
 
 Check the [wiki](https://github.com/dmunozv04/iSponsorBlockTV/wiki/Installation)
 
+### Windows desktop installer
+
+Windows users can download `iSponsorBlockTV-2.6.1-setup.exe` from the
+[latest release](https://github.com/dmunozv04/iSponsorBlockTV/releases/latest).
+The installer includes Python and all application dependencies, so Python does
+not need to be installed separately. Application data is stored in the user's
+local application data directory.
+
 ## Compatibility
 
 Legend: ✅ = Working, ❌ = Not working, ❔ = Not tested

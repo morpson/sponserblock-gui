@@ -171,6 +171,33 @@ jobs:
         path: dist/binary/*
         if-no-files-found: error
 
+  build-windows-installer:
+    name: Build Windows installer
+    runs-on: windows-latest
+    needs: build-sdist-and-wheel
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.11"
+
+    - name: Install Inno Setup
+      run: choco install innosetup --no-progress --yes
+
+    - name: Build installer
+      shell: powershell
+      run: .\scripts\build_windows_installer.ps1
+
+    - name: Upload installer
+      uses: actions/upload-artifact@v5
+      with:
+        name: windows-installer
+        path: dist/windows/*.exe
+        if-no-files-found: error
+
 
   publish-to-pypi:
     needs: build-sdist-and-wheel
@@ -197,6 +224,7 @@ jobs:
     needs:
       - build-sdist-and-wheel
       - build-binaries
+      - build-windows-installer
     if: github.event_name == 'release' && github.event.action == 'published'
     runs-on: ubuntu-latest
     steps:

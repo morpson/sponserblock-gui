@@ -141,8 +141,9 @@ class Config:
     help="Setup the program in the command line",
     hidden=True,
 )
+@click.option("--tui", is_flag=True, help="Start the TUI", hidden=True)
 @click.pass_context
-def cli(ctx, data, debug, http_tracing, setup, setup_cli):
+def cli(ctx, data, debug, http_tracing, setup, setup_cli, tui):
     """iSponsorblockTV"""
     ctx.ensure_object(dict)
     ctx.obj["data_dir"] = data
@@ -165,6 +166,8 @@ def cli(ctx, data, debug, http_tracing, setup, setup_cli):
             ctx.invoke(setup_command)
         elif setup_cli:
             ctx.invoke(setup_cli_command)
+        elif tui:
+            ctx.invoke(tui)
         else:
             ctx.invoke(start)
 
@@ -193,6 +196,17 @@ def start(ctx):
     config = Config(ctx.obj["data_dir"])
     config.validate()
     main.main(config, ctx.obj["debug"], ctx.obj["http_tracing"])
+
+
+@cli.command(name="tui")
+@click.pass_context
+def tui(ctx):
+    """Start the TUI"""
+    from . import tui as tui_module
+    config = Config(ctx.obj["data_dir"])
+    app = tui_module.iSponsorBlockTVTUI(config)
+    app.run()
+
 
 
 # Create fake "self" group to show pyapp options in help menu

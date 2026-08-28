@@ -108,6 +108,26 @@ class ApiHelper:
             channels.append((i["snippet"]["channelId"], i["snippet"]["channelTitle"], sub_count))
         return channels
 
+    @AsyncLRU(maxsize=10)
+    async def search_videos(self, query):
+        videos = []
+        params = {
+            "q": query,
+            "key": self.apikey,
+            "part": "snippet",
+            "type": "video",
+            "maxResults": "10",
+        }
+        url = constants.Youtube_api + "search"
+        async with self.web_session.get(url, params=params) as resp:
+            data = await resp.json()
+        if "error" in data:
+            return videos
+
+        for i in data["items"]:
+            videos.append((i["id"]["videoId"], html.unescape(i["snippet"]["title"])))
+        return videos
+
     @list_to_tuple  # Convert list to tuple so it can be used as a key in the cache
     @AsyncConditionalTTL(time_to_live=300, maxsize=10)  # 5 minutes for non-locked segments
     async def get_segments(self, vid_id):

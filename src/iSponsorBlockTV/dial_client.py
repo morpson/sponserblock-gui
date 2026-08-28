@@ -106,8 +106,14 @@ async def find_youtube_app(web_session, url_location):
     if status_code == 200:
         data = xmltodict.parse(response)
         data = data["service"]
-        screen_id = data["additionalData"]["screenId"]
+        additional_data = data.get("additionalData")
+        if not additional_data or not isinstance(additional_data, dict):
+            return None
+        screen_id = additional_data.get("screenId")
+        if not screen_id:
+            return None
         return {"screen_id": screen_id, "name": name, "offset": 0}
+    return None
 
 
 async def discover(web_session):
@@ -145,6 +151,8 @@ async def discover(web_session):
 
     devices = []
     for i in handler.devices:
-        devices.append(await find_youtube_app(web_session, i))
+        device = await find_youtube_app(web_session, i)
+        if device is not None:
+            devices.append(device)
 
     return devices
